@@ -55,7 +55,8 @@ namespace CustomHarvestFix
                         {
                             
                             if (thisAnimal.defaultProduceIndex.Value != farmAnimalDataProduceTable[thisAnimal.type.Value][0] || thisAnimal.deluxeProduceIndex.Value != farmAnimalDataProduceTable[thisAnimal.type.Value][1])
-                            {                                
+                            {    
+                                //fix the standard item.
                                 if (thisAnimal.defaultProduceIndex.Value != farmAnimalDataProduceTable[thisAnimal.type.Value][0]) {
                                     this.Monitor.Log(thisAnimal.Name + " the " + thisAnimal.type.Value + " producing: basic item " + thisAnimal.defaultProduceIndex.Value + " but should be producing basic item " + farmAnimalDataProduceTable[thisAnimal.type.Value][0].ToString() + ". Fixed.");
                                     if (thisAnimal.currentProduce == thisAnimal.defaultProduceIndex)
@@ -67,7 +68,9 @@ namespace CustomHarvestFix
                                     //Helper.Reflection.GetField<Netcode.NetInt>(thisAnimal, "defaultProduceIndex").SetValue(new Netcode.NetInt(farmAnimalDataProduceTable[thisAnimal.type.Value][0]));
                                     Helper.Reflection.GetField<Netcode.NetInt>(thisAnimal, "defaultProduceIndex").GetValue().Value = farmAnimalDataProduceTable[thisAnimal.type.Value][0];
                                 }
-                                else if (thisAnimal.deluxeProduceIndex.Value != farmAnimalDataProduceTable[thisAnimal.type.Value][1])
+
+                                //fix the delux item.
+                                if (thisAnimal.deluxeProduceIndex.Value != farmAnimalDataProduceTable[thisAnimal.type.Value][1])
                                 {
                                     this.Monitor.Log(thisAnimal.Name + " the " + thisAnimal.type.Value + " producing deluxe item " + thisAnimal.deluxeProduceIndex.Value + " but should be producing deluxe item " + farmAnimalDataProduceTable[thisAnimal.type.Value][1].ToString() + ". Fixed.");
                                     if (thisAnimal.currentProduce == thisAnimal.deluxeProduceIndex)
