@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crops\CaveCarrotFlower.cs" />
     <Compile Include="LoadMarker.cs" />
     <Compile Include="ModState.cs" />
     <Compile Include="NetworkMessageTypes.cs" />
