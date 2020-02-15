@@ -13,13 +13,10 @@ namespace SubterranianOverhaul
     class VoidshroomDataInjector : IAssetEditor
     {
         private IMonitor monitor;
-        private VoidshroomSpore spore;
 
         public VoidshroomDataInjector(IMonitor monitor)
         {
             this.monitor = monitor;
-            VoidshroomSpore.setIndex(); //get an item index for voidshroom spores if one isn't already set.
-            this.spore = new VoidshroomSpore();
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
@@ -29,27 +26,30 @@ namespace SubterranianOverhaul
 
         public void Edit<T>(IAssetData asset)
         {
+            VoidshroomSpore.setIndex(); //get an item index for voidshroom spores if one isn't already set.
+            //this.spore = new VoidshroomSpore();
             if (asset.AssetNameEquals("Maps\\springobjects"))
             {
                 IAssetDataForImage editor = asset.AsImage();
                 Texture2D data = editor.Data;
                 Texture2D texture2D = new Texture2D(Game1.graphics.GraphicsDevice, data.Width, Math.Max(data.Height, 4096));
                 editor.ReplaceWith(texture2D);
+                editor.PatchImage(data, new Rectangle?(), new Rectangle?(), PatchMode.Replace);
                 try
                 {
-                    editor.PatchImage(TextureSet.voidShroomSpore, new Rectangle?(), new Rectangle?(this.objectRect(spore.ParentSheetIndex)), PatchMode.Replace);
+                    editor.PatchImage(TextureSet.voidShroomSpore, new Rectangle?(), new Rectangle?(this.objectRect(VoidshroomSpore.getIndex())), PatchMode.Replace);
                 }
                 catch (Exception)
-                {   
+                {
                 }
             } else if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
                 IAssetDataForDictionary<int, string> editor = asset.AsDictionary<int, string>();
 
                 IDictionary<int, string> data = editor.Data;
-                if (!data.ContainsKey(spore.ParentSheetIndex))
+                if (!data.ContainsKey(VoidshroomSpore.getIndex()))
                 {
-                    data.Add(spore.ParentSheetIndex, spore.getObjectData());
+                    data.Add(VoidshroomSpore.getIndex(), VoidshroomSpore.getObjectData());
                 }
             }
         }

@@ -43,9 +43,7 @@ namespace SubterranianOverhaul
             helper.Events.GameLoop.Saving += this.OnSave;
             helper.Events.GameLoop.Saved += this.AfterSave;
             helper.Events.GameLoop.SaveLoaded += this.AfterSaveLoad;
-            helper.Events.Specialized.LoadStageChanged += this.OnLoadingStageChanged;
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
-            helper.Events.Multiplayer.PeerContextReceived += this.OnClientConnected;
             //helper.Events.Multiplayer.ModMessageReceived += this.ProcessModMessage;
 
             this.Helper.Content.AssetEditors.Add(new VoidshroomDataInjector(this.Monitor));

@@ -23,19 +23,15 @@ namespace SubterranianOverhaul
 
             int start = lastIndex;
             int currentIndex = start;
-            while (currentIndex < MAX_INDEX && Game1.objectInformation.ContainsKey(currentIndex))
-            {
-                currentIndex++;
-            }
 
             if(currentIndex < MAX_INDEX)
             {
-                IndexManager.log("Found unused index: " + currentIndex);
+                IndexManager.log("Issuing Object ID " + currentIndex);
                 lastIndex = currentIndex + 1;
                 return currentIndex;
             } else
             {
-                IndexManager.log("Could not find unused index between " + startingIndex + " and " + MAX_INDEX);
+                IndexManager.log("Could not find unused object index between " + startingIndex + " and " + MAX_INDEX);
                 return -1;
             }
         }
