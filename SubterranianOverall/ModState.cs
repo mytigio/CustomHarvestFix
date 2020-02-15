@@ -18,7 +18,7 @@ namespace SubterranianOverhaul
         public static HashSet<String> visitedMineshafts = new HashSet<String>();
         public static Dictionary<String, Dictionary<Vector2, VoidshroomtreeSaveData>> voidshroomTreeLocations = new Dictionary<String, Dictionary<Vector2, VoidshroomtreeSaveData>>();
         public static ModState thisModState;
-        public static String saveKeyUsed = SAVE_KEY;
+        public static String saveKeyUsed = "";
 
         public HashSet<String> mineShaftSaveData
         {
