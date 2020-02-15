@@ -61,11 +61,8 @@ namespace SubterranianOverhaul
                 return;
 
             // save data
-            string json = JsonConvert.SerializeObject(ModState.getModState());
-
             ModEntry.GetMonitor().Log("Attempting to save mod data");
-
-            ModEntry.GetHelper().Data.WriteSaveData("data", json);
+            ModEntry.GetHelper().Data.WriteSaveData("so_data", ModState.getModState());
         }
 
         public static void LoadMod()
@@ -78,9 +75,17 @@ namespace SubterranianOverhaul
             
             try
             {
-                String data = ModEntry.GetHelper().Data.ReadSaveData<String>("data");
-                ModEntry.GetMonitor().Log("Attempting to load mod data");
-                ModState state = JsonConvert.DeserializeObject<ModState>(data);
+                ModState state = ModEntry.GetHelper().Data.ReadSaveData<ModState>("so_data");
+
+                if (state.mineShaftSaveData.Count == 0 && state.voidshroomTreeLocationsSaveData.Count == 0)
+                {
+                    //need to find folks who have the old data model and convert them to the new one.
+                    //since we had no data from the new structure, lets try the old method.
+                    String data = ModEntry.GetHelper().Data.ReadSaveData<String>("data");
+                    ModEntry.GetMonitor().Log("Attempting to load mod data");
+                    state = JsonConvert.DeserializeObject<ModState>(data);
+                }
+                
             } catch (Exception e)
             {
                 ModEntry.GetMonitor().Log(e.Message);

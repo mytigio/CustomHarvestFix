@@ -47,6 +47,8 @@ namespace SubterranianOverhaul
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
             helper.Events.Multiplayer.PeerContextReceived += this.OnClientConnected;
             //helper.Events.Multiplayer.ModMessageReceived += this.ProcessModMessage;
+
+            this.Helper.Content.AssetEditors.Add(new VoidshroomDataInjector(this.Monitor));
         }
 
         public static IModHelper GetHelper()
@@ -59,35 +61,13 @@ namespace SubterranianOverhaul
             return ModEntry.mod?.Monitor;
         }
 
-
-        /*********
-        ** Private methods
-        *********/
-
-        private void OnClientConnected(object sender, PeerContextReceivedEventArgs e)
-        {
-            this.Helper.Content.AssetEditors.Add(new VoidshroomDataInjector(this.Monitor));
-        }
-
-        private void OnLoadingStageChanged(object sender, LoadStageChangedEventArgs e)
-        {
-            this.Helper.Content.AssetEditors.Add(new VoidshroomDataInjector(this.Monitor));
-        }
-
-        
-
-        private static bool savingInProgress = false;
+        //private static bool savingInProgress = false;
 
         private void OnSave(object sender, SavingEventArgs e)
-        {
-            if (!savingInProgress)
-            {
-                savingInProgress = true;
-                VoidshroomTree.RemovalAll();
-                ModState.visitedMineshafts.Clear();
-                ModState.SaveMod();
-                savingInProgress = false;
-            }
+        { 
+            VoidshroomTree.RemovalAll();
+            ModState.visitedMineshafts.Clear();
+            ModState.SaveMod();
         }
 
         private void AfterSave(object sender, SavedEventArgs e)

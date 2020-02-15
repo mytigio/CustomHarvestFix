@@ -31,26 +31,26 @@ namespace SubterranianOverhaul
         {
             if (asset.AssetNameEquals("Maps\\springobjects"))
             {
-                Texture2D data = ((IAssetData<Texture2D>)asset.AsImage()).Data;
+                IAssetDataForImage editor = asset.AsImage();
+                Texture2D data = editor.Data;
                 Texture2D texture2D = new Texture2D(Game1.graphics.GraphicsDevice, data.Width, Math.Max(data.Height, 4096));
-                ((IAssetData<object>)asset).ReplaceWith((object)texture2D);
-                asset.AsImage().PatchImage(data, new Rectangle?(), new Rectangle?(), (PatchMode)0);
+                editor.ReplaceWith(texture2D);
                 try
-                {   
-                    asset.AsImage().PatchImage(TextureSet.voidShroomSpore, new Rectangle?(), new Rectangle?(this.objectRect(spore.ParentSheetIndex)), (PatchMode)0);
+                {
+                    editor.PatchImage(TextureSet.voidShroomSpore, new Rectangle?(), new Rectangle?(this.objectRect(spore.ParentSheetIndex)), PatchMode.Replace);
                 }
                 catch (Exception)
                 {   
                 }
             } else if (asset.AssetNameEquals("Data\\ObjectInformation"))
             {
+                IAssetDataForDictionary<int, string> editor = asset.AsDictionary<int, string>();
 
-                IDictionary<int, string> data = ((IAssetData<IDictionary<int, string>>)asset.AsDictionary<int, string>()).Data;
-                if(!data.ContainsKey(spore.ParentSheetIndex))
+                IDictionary<int, string> data = editor.Data;
+                if (!data.ContainsKey(spore.ParentSheetIndex))
                 {
                     data.Add(spore.ParentSheetIndex, spore.getObjectData());
                 }
-                
             }
         }
 
