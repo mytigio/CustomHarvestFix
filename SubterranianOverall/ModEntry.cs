@@ -16,11 +16,11 @@ namespace SubterranianOverhaul
     {
         //remember to set all of this into a config file.
         private const double STONE_BASE_CHANCE_TO_CHANGE = 0.0010; //0.1% chance at level 90.
-        private const double STONE_INCREASE_PER_LEVEL = 0.002; //results in a maximum chance at level 119 of 5.9% for each stone to change.
-        private const double PURPLE_MUSHROOM_CHANCE_TO_CHANGE = 0.05; //5% chance of each purple mushroom changing.
-        private const double PURPLE_MUSHROOM_INCREASE_PER_LEVEL = 0.005; //results in a maximum chance at level 119 of 19.5% for each purple mushroom to change.
-        private const double RED_MUSHROOM_CHANCE_TO_CHANGE = 0.20; //10% chance of each red mushroom changing.
-        private const double RED_MUSHROOM_INCREASE_PER_LEVEL = 0.010; //results in a maximum chance at level 119 of 59% for each red mushroom to change.
+        private const double STONE_INCREASE_PER_LEVEL = 0.002; //results in a maximum chance at level 119 of 5.9% for each stone to try and spawn a tree.
+        private const double PURPLE_MUSHROOM_CHANCE_TO_CHANGE = 0.05; //5% chance of each purple mushroom.
+        private const double PURPLE_MUSHROOM_INCREASE_PER_LEVEL = 0.005; //results in a maximum chance at level 119 of 19.5% for each purple mushroom to try and spawn a tree.
+        private const double RED_MUSHROOM_CHANCE_TO_CHANGE = 0.20; //20% chance of each red mushroom.
+        private const double RED_MUSHROOM_INCREASE_PER_LEVEL = 0.010; //results in a maximum chance at level 119 of 59% for each red mushroom to try and spawn a tree.
 
         private static ModEntry mod;
 
@@ -45,7 +45,6 @@ namespace SubterranianOverhaul
             helper.Events.GameLoop.Saved += this.AfterSave;
             helper.Events.GameLoop.SaveLoaded += this.AfterSaveLoad;
             helper.Events.Display.RenderedHud += this.OnRenderedHud;
-            //helper.Events.Multiplayer.ModMessageReceived += this.ProcessModMessage;
 
             this.Helper.Content.AssetEditors.Add(new VoidshroomDataInjector(this.Monitor));
         }
@@ -157,17 +156,6 @@ namespace SubterranianOverhaul
                             this.Monitor.Log("We haven't processed before. Add marker to 0,0 on (" + loc.Name + ")");
                             loc.Objects.Add(origin, new LoadMarker());
                         }
-
-                        //if we've already populated this mine level today, don't do so again.
-                        /*
-                        if (ModState.visitedMineshafts.Contains(loc.Name))
-                        {
-                            this.Monitor.Log(loc.Name + " was already visited and populated with voidshroom trees today.");
-                            return;
-                        }
-                        */
-
-                        //ModState.visitedMineshafts.Add(loc.Name);
 
                         foreach (StardewValley.Object o in loc.Objects.Values)
                         {
