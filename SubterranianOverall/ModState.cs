@@ -17,8 +17,8 @@ namespace SubterranianOverhaul
         private const String SAVE_KEY = "so_data";
         public static HashSet<String> visitedMineshafts = new HashSet<String>();
         public static Dictionary<String, Dictionary<Vector2, VoidshroomtreeSaveData>> voidshroomTreeLocations = new Dictionary<String, Dictionary<Vector2, VoidshroomtreeSaveData>>();
+        //public static Dictionary<String, Dictionary<Vector2, CaveCarrotCropSaveData>> caveCarrotsPlanted = new Dictionary<String, Dictionary<Vector2, CaveCarrotCropSaveData>>();
         public static ModState thisModState;
-        public static String saveKeyUsed = "";
 
         public HashSet<String> mineShaftSaveData
         {
@@ -39,17 +39,6 @@ namespace SubterranianOverhaul
 
             set {
                 ModState.voidshroomTreeLocations = value;
-            }
-        }
-
-        public String saveKey
-        {
-            get {
-                return ModState.saveKeyUsed;
-            }
-
-            set {
-                ModState.saveKeyUsed = value;
             }
         }
 
@@ -75,7 +64,6 @@ namespace SubterranianOverhaul
 
             // save data
             ModEntry.GetMonitor().Log("Attempting to save mod data");
-            ModState.saveKeyUsed = SAVE_KEY;
             ModEntry.GetHelper().Data.WriteSaveData(SAVE_KEY, ModState.getModState());
         }
 
@@ -91,15 +79,22 @@ namespace SubterranianOverhaul
             {
                 ModState state = ModEntry.GetHelper().Data.ReadSaveData<ModState>(SAVE_KEY);
 
-                if (ModState.saveKeyUsed != SAVE_KEY)
+                if (state == null)
                 {
                     //need to find folks who have the old data model and convert them to the new one.
                     //since the save key used doesn't match the current save key, lets try the old method.
                     String data = ModEntry.GetHelper().Data.ReadSaveData<String>("data");
                     ModEntry.GetMonitor().Log("Attempting to load mod data");
                     state = JsonConvert.DeserializeObject<ModState>(data);
+
+                    if (state != null)
+                    {
+                        //this user has the old save format.  Save in new format real quick and blank out the old key.
+                        ModEntry.GetHelper().Data.WriteSaveData(SAVE_KEY, ModState.getModState());
+                        ModEntry.GetHelper().Data.WriteSaveData("data", "");
+                    }
+
                 }
-                
             } catch (Exception e)
             {
                 ModEntry.GetMonitor().Log(e.Message);

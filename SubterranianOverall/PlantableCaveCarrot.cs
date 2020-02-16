@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewValley;
@@ -13,61 +14,20 @@ using xTile.Dimensions;
 using System.IO;
 using StardewModdingAPI.Events;
 using Microsoft.Xna.Framework.Input;
+using SubterranianOverhaul.Crops;
 
 namespace SubterranianOverhaul
 {
-    class VoidshroomSpore : StardewValley.Object
+    class PlantableCaveCarrot : StardewValley.Object
     {
-        public const String NAME = "Voidshroom Spore";
-        public const String DISPLAY_NAME = "Voidshroom Spore";
-        public const int QUALITY = 0;
-        public const int PRICE = 10;
-        public const int CATEGORY = 74;
-        public const int EDIBILITY = -300;
-        public const string DESCRIPTION = "The spore of a giant Voidshroom Tree.  These giant fungi only thrive in darkness.";
-
-        private static int itemIndex = -1;
-
         public static void setIndex()
         {
-            if (VoidshroomSpore.itemIndex == -1)
-            {
-                VoidshroomSpore.itemIndex = IndexManager.getUnusedObjectIndex();
-            }
+            
         }
 
         public static int getIndex()
         {
-            if(VoidshroomSpore.itemIndex == -1)
-            {
-                VoidshroomSpore.setIndex();
-            }
-
-            return VoidshroomSpore.itemIndex;
-        }
-
-        public VoidshroomSpore(Vector2 tileLocation) : base(tileLocation, itemIndex, false)
-        {
-            this.Name = VoidshroomSpore.NAME;
-            this.DisplayName = VoidshroomSpore.DISPLAY_NAME;
-            this.Quality = VoidshroomSpore.QUALITY;
-            this.Price = VoidshroomSpore.PRICE;
-            this.Category = VoidshroomSpore.CATEGORY;
-        }
-
-        public VoidshroomSpore() : this(Vector2.Zero)
-        {
-            
-        }        
-
-        public static string getObjectData()
-        {
-            return string.Format("{0}/{1}/{2}/Basic {3}/{4}/{5}", VoidshroomSpore.NAME, VoidshroomSpore.PRICE, VoidshroomSpore.EDIBILITY, VoidshroomSpore.CATEGORY, VoidshroomSpore.NAME, VoidshroomSpore.DESCRIPTION);
-        }
-
-        public override string getDescription()
-        {
-            return VoidshroomSpore.DESCRIPTION;
+            return CaveCarrot.HARVEST_INDEX;
         }
 
         public static bool IsValidLocation(GameLocation location)
@@ -77,12 +37,23 @@ namespace SubterranianOverhaul
 
         internal static bool AttemptPlanting(Vector2 grabTile, GameLocation location, Farmer who = null)
         {
-            if (VoidshroomSpore.canPlaceHere(location, grabTile))
-            {
-                location.terrainFeatures.Remove(grabTile);
-                location.terrainFeatures.Add(grabTile, (TerrainFeature)new VoidshroomTree(0));
-                location.playSound("dirtyHit");
-                return true;
+            if (PlantableCaveCarrot.canPlaceHere(location, grabTile))
+            {   
+                try
+                {
+                    location.terrainFeatures.Remove(grabTile);
+                    int X = (int)grabTile.X;
+                    int Y = (int)grabTile.Y;
+                    int seedIndex = CaveCarrotFlower.getIndex();
+                    Crop caveCarrotFlower = new Crop(seedIndex, X,Y);
+                    location.terrainFeatures.Add(grabTile, (TerrainFeature)new HoeDirt(0, caveCarrotFlower));
+                    return true;
+                } catch
+                {   
+                    return false;
+                }
+                
+                
             } else
             {
                 if(!IsValidLocation(location))

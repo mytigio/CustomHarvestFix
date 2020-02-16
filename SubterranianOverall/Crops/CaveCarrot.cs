@@ -1,7 +1,11 @@
-﻿using Netcode;
+﻿using Microsoft.Xna.Framework;
+using Netcode;
+using StardewModdingAPI;
 using StardewValley;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,78 +15,177 @@ namespace SubterranianOverhaul.Crops
 {
     public class CaveCarrot : Crop
     {
-        /*public readonly NetIntList phaseDays = new NetIntList();
-        [XmlElement("rowInSpriteSheet")]
-        public readonly NetInt rowInSpriteSheet = new NetInt();
-        [XmlElement("phaseToShow")]
-        public readonly NetInt phaseToShow = new NetInt(-1);
-        [XmlElement("currentPhase")]
-        public readonly NetInt currentPhase = new NetInt();
-        [XmlElement("harvestMethod")]
-        public readonly NetInt harvestMethod = new NetInt();
-        [XmlElement("indexOfHarvest")]
-        public readonly NetInt indexOfHarvest = new NetInt();
-        [XmlElement("regrowAfterHarvest")]
-        public readonly NetInt regrowAfterHarvest = new NetInt();
-        [XmlElement("dayOfCurrentPhase")]
-        public readonly NetInt dayOfCurrentPhase = new NetInt();
-        [XmlElement("minHarvest")]
-        public readonly NetInt minHarvest = new NetInt();
-        [XmlElement("maxHarvest")]
-        public readonly NetInt maxHarvest = new NetInt();
-        [XmlElement("maxHarvestIncreasePerFarmingLevel")]
-        public readonly NetInt maxHarvestIncreasePerFarmingLevel = new NetInt();
-        [XmlElement("daysOfUnclutteredGrowth")]
-        public readonly NetInt daysOfUnclutteredGrowth = new NetInt();
-        [XmlElement("whichForageCrop")]
-        public readonly NetInt whichForageCrop = new NetInt();
-        public readonly NetStringList seasonsToGrowIn = new NetStringList();
-        [XmlElement("tintColor")]
-        public readonly NetColor tintColor = new NetColor();
-        [XmlElement("flip")]
-        public readonly NetBool flip = new NetBool();
-        [XmlElement("fullGrown")]
-        public readonly NetBool fullyGrown = new NetBool();
-        [XmlElement("raisedSeeds")]
-        public readonly NetBool raisedSeeds = new NetBool();
-        [XmlElement("programColored")]
-        public readonly NetBool programColored = new NetBool();
-        [XmlElement("dead")]
-        public readonly NetBool dead = new NetBool();
-        [XmlElement("forageCrop")]
-        public readonly NetBool forageCrop = new NetBool();
-        [XmlElement("chanceForExtraCrops")]
-        public readonly NetDouble chanceForExtraCrops = new NetDouble(0.0);
-        [XmlIgnore]
-        public readonly NetInt netSeedIndex = new NetInt(-1);
-        
-        public NetFields NetFields { get; } = new NetFields();
-        */
-
-        private static int itemIndex = -1;
+        private static int seedIndex = -1;
         private static int cropTextureIndex = -1;
+
+        private const string CROP_DATA_STRING = "1 1 1/spring summer fall winter/{1}/{0}/-1/0/false/false/false";
+        public const int HARVEST_INDEX = 78;
 
         public static void setIndex()
         {
-            if (CaveCarrot.itemIndex == -1 || CaveCarrot.cropTextureIndex == -1)
+            if (CaveCarrot.seedIndex == -1)
             {
-                CaveCarrot.itemIndex = IndexManager.getUnusedObjectIndex();
+                CaveCarrot.seedIndex = CaveCarrotSeed.getIndex();
             }
         }
 
         public static int getIndex()
         {
-            if (CaveCarrot.itemIndex == -1)
+            if (CaveCarrot.seedIndex == -1)
             {
                 CaveCarrot.setIndex();
             }
 
-            return CaveCarrot.itemIndex;
+            return CaveCarrot.seedIndex;
         }
 
-        public CaveCarrot()
+        public static void setCropIndex()
         {
-            this.NetFields.AddFields((INetSerializable)this.phaseDays, (INetSerializable)this.rowInSpriteSheet, (INetSerializable)this.phaseToShow, (INetSerializable)this.currentPhase, (INetSerializable)this.harvestMethod, (INetSerializable)this.indexOfHarvest, (INetSerializable)this.regrowAfterHarvest, (INetSerializable)this.dayOfCurrentPhase, (INetSerializable)this.minHarvest, (INetSerializable)this.maxHarvest, (INetSerializable)this.maxHarvestIncreasePerFarmingLevel, (INetSerializable)this.daysOfUnclutteredGrowth, (INetSerializable)this.whichForageCrop, (INetSerializable)this.seasonsToGrowIn, (INetSerializable)this.tintColor, (INetSerializable)this.flip, (INetSerializable)this.fullyGrown, (INetSerializable)this.raisedSeeds, (INetSerializable)this.programColored, (INetSerializable)this.dead, (INetSerializable)this.forageCrop, (INetSerializable)this.chanceForExtraCrops, (INetSerializable)this.netSeedIndex);
+            if (CaveCarrot.cropTextureIndex == -1)
+            {
+                CaveCarrot.cropTextureIndex = IndexManager.getUnusedCropIndex();
+            }
         }
+
+        public static int getCropIndex()
+        {
+            if (CaveCarrot.cropTextureIndex == -1)
+            {
+                CaveCarrot.setCropIndex();
+            }
+
+            return CaveCarrot.cropTextureIndex;
+        }
+
+        public CaveCarrot() : this(Vector2.Zero)
+        {   
+        }
+
+        public CaveCarrot(Vector2 tileLocation) : base(seedIndex,(int) tileLocation.X, (int) tileLocation.Y)
+        {   
+        }
+
+        public static string getCropData()
+        {
+            return String.Format(CROP_DATA_STRING,HARVEST_INDEX,CaveCarrot.getCropIndex());
+        }
+
+        /*
+        private static HashSet<GameLocation> processedLocations = new HashSet<GameLocation>();
+
+        internal static void RemoveAll()
+        {
+            SetHelper();
+            SetMonitor();
+
+            if (!Game1.IsMasterGame)
+                return;
+
+            monitor.Log("CaveCarrot.RemovalAll()", StardewModdingAPI.LogLevel.Trace);
+            ModState.caveCarrotsPlanted.Clear();
+
+            processedLocations.Clear();
+
+            foreach (GameLocation location in Game1.locations)
+            {
+                ProcessLocation(location, ProcessingMethod.Remove);
+            }
+
+            processedLocations.Clear();
+        }
+
+        internal static void ReplaceAll()
+        {
+            throw new NotImplementedException();
+        }
+        public static void ProcessLocation(GameLocation location, ProcessingMethod method)
+        {
+            if (location == null)
+                return;
+
+            monitor.Log("CaveCarrot.ProcessLocation(" + location.Name + ", " + method + ")", StardewModdingAPI.LogLevel.Trace);
+
+            if (processedLocations.Contains(location))
+            {
+                monitor.Log("CaveCarrot.ProcessLocation(" + location.Name + ", " + method + "): Already processed this location (infinite recursion?), aborting!", StardewModdingAPI.LogLevel.Warn);
+                return;
+            }
+
+            processedLocations.Add(location);
+
+            bool itemsToRemove = false;
+
+            if (CaveCarrotSeed.IsValidLocation(location))
+            {
+                String locationName = location.Name.ToString();
+                if (method.Equals(ProcessingMethod.Remove))
+                {
+
+                    foreach (Vector2 featureSpot in location.terrainFeatures.Keys)
+                    {
+                        if (location.terrainFeatures[featureSpot] is HoeDirt)
+                        {
+                            HoeDirt dirtSpot = location.terrainFeatures[featureSpot] as HoeDirt;
+                            if (dirtSpot.crop.netSeedIndex.Value == CaveCarrotSeed.getIndex())
+                            {
+                                StringWriter writer = new StringWriter();
+
+                                if (!ModState.caveCarrotsPlanted.ContainsKey(locationName))
+                                {
+                                    ModState.caveCarrotsPlanted.Add(locationName, new Dictionary<Vector2, CaveCarrotCropSaveData>());
+                                }
+
+                                CaveCarrot carrot = dirtSpot.crop as CaveCarrot;
+
+                                ModState.caveCarrotsPlanted[locationName].Add(featureSpot, carrot.GetSaveData());
+                                itemsToRemove = true;
+                            }
+                        }
+                    }
+
+                    //data is stored, but if we're removing we need to actually clear stuff out of the list now.
+                    if (itemsToRemove)
+                    {
+                        foreach (Vector2 locationData in ModState.caveCarrotsPlanted[location.Name.ToString()].Keys)
+                        {
+                            location.terrainFeatures.Remove(locationData);
+                        }
+                    }
+                }
+                else if (method.Equals(ProcessingMethod.Restore))
+                {
+                    if (ModState.caveCarrotsPlanted.ContainsKey(location.Name.ToString()))
+                    {
+                        foreach (KeyValuePair<Vector2, CaveCarrotCropSaveData> locationData in ModState.caveCarrotsPlanted[location.Name.ToString()])
+                        {
+                            
+                            location.terrainFeatures.Add(locationData.Key, new VoidshroomTree(locationData.Value));
+                        }
+                    }
+                }
+            }
+        }
+
+        private CaveCarrotCropSaveData GetSaveData()
+        {
+            return new CaveCarrotCropSaveData(this);
+        }
+
+        public static void SetHelper()
+        {
+            if (CaveCarrot.helper == null)
+            {
+                CaveCarrot.helper = ModEntry.GetHelper();
+            }
+        }
+
+        public static void SetMonitor()
+        {
+            if (CaveCarrot.monitor == null)
+            {
+                CaveCarrot.monitor = ModEntry.GetMonitor();
+            }
+        }
+        */
     }
 }

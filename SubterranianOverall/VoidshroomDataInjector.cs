@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using SubterranianOverhaul.Crops;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +18,26 @@ namespace SubterranianOverhaul
         public VoidshroomDataInjector(IMonitor monitor)
         {
             this.monitor = monitor;
+            if (this.monitor != null)
+            {
+                this.monitor.Log("Data Injector initialized");
+            }
         }
 
         public bool CanEdit<T>(IAssetInfo asset)
         {
-            return (asset.AssetNameEquals("Maps\\springobjects") || asset.AssetNameEquals("Data\\ObjectInformation"));
+            return (asset.AssetNameEquals("Maps\\springobjects") || 
+                    asset.AssetNameEquals("Data\\ObjectInformation") || 
+                    asset.AssetNameEquals("Data\\Crops") ||
+                    asset.AssetNameEquals("TileSheets\\crops"));
         }
 
         public void Edit<T>(IAssetData asset)
         {
             VoidshroomSpore.setIndex(); //get an item index for voidshroom spores if one isn't already set.
-            //this.spore = new VoidshroomSpore();
+            CaveCarrotSeed.setIndex();
+            CaveCarrot.setIndex();
+            CaveCarrot.setCropIndex();
             if (asset.AssetNameEquals("Maps\\springobjects"))
             {
                 IAssetDataForImage editor = asset.AsImage();
@@ -38,6 +48,7 @@ namespace SubterranianOverhaul
                 try
                 {
                     editor.PatchImage(TextureSet.voidShroomSpore, new Rectangle?(), new Rectangle?(this.objectRect(VoidshroomSpore.getIndex())), PatchMode.Replace);
+                    editor.PatchImage(TextureSet.caveCarrotSeed, new Rectangle?(), new Rectangle?(this.objectRect(CaveCarrotSeed.getIndex())), PatchMode.Replace);
                 }
                 catch (Exception)
                 {
@@ -50,13 +61,71 @@ namespace SubterranianOverhaul
                 if (!data.ContainsKey(VoidshroomSpore.getIndex()))
                 {
                     data.Add(VoidshroomSpore.getIndex(), VoidshroomSpore.getObjectData());
+                    
+                }
+
+                if (!data.ContainsKey(CaveCarrotSeed.getIndex()))
+                {
+                    data.Add(CaveCarrotSeed.getIndex(), CaveCarrotSeed.getObjectData());
+                }
+            } else if (asset.AssetNameEquals("Data\\Crops"))
+            {
+                IAssetDataForDictionary<int, string> editor = asset.AsDictionary<int, string>();
+                IDictionary<int, string> data = editor.Data;
+
+                int seedIndex = CaveCarrot.getIndex();
+                this.log("seedIndex is: "+seedIndex);
+                if (!data.ContainsKey(seedIndex)) {
+                    String cropData = CaveCarrot.getCropData();
+                    this.monitor.Log("Loading crop data: "+cropData);
+                    data.Add(CaveCarrot.getIndex(), cropData);
+                }
+
+                int caveCarrotFlowerIndex = CaveCarrotFlower.getIndex();
+                this.log("seedIndex is: " + caveCarrotFlowerIndex);
+                if (!data.ContainsKey(caveCarrotFlowerIndex))
+                {
+                    String cropData = CaveCarrotFlower.getCropData();
+                    this.monitor.Log("Loading crop data: " + cropData);
+                    data.Add(caveCarrotFlowerIndex, cropData);
+                }
+            } else if (asset.AssetNameEquals("TileSheets\\crops"))
+            {
+                IAssetDataForImage editor = asset.AsImage();
+                Texture2D data = editor.Data;
+                Texture2D texture2D = new Texture2D(Game1.graphics.GraphicsDevice, data.Width, Math.Max(data.Height, 4096));
+                editor.ReplaceWith(texture2D);
+                editor.PatchImage(data, new Rectangle?(), new Rectangle?(), PatchMode.Replace);
+                try
+                {
+                    int index = CaveCarrot.getCropIndex();
+                    this.monitor.Log("Loading cave carrot crop texture.  Crop index: " + index);
+                    editor.PatchImage(TextureSet.caveCarrotCrop, new Rectangle?(), new Rectangle?(this.cropRect(index)), PatchMode.Replace);
+
+                    index = CaveCarrotFlower.getCropIndex();
+                    this.monitor.Log("Loading cave carrot flower crop texture.  Crop index: " + index);
+                    editor.PatchImage(TextureSet.caveCarrotFlowerCrop, new Rectangle?(), new Rectangle?(this.cropRect(index)), PatchMode.Replace);
+                }
+                catch (Exception)
+                {
                 }
             }
         }
 
         private Rectangle objectRect(int index)
+        {   
+            return getRectangle(index, 24, 16, 16);
+        }
+
+        private Rectangle cropRect(int index)
+        {   
+            return getRectangle(index, 2, 32, 128);
+            
+        }
+
+        private Rectangle getRectangle(int index, int itemsPerRow, int pixelsVertical, int pixelsHorizontal)
         {
-            return new Rectangle(index % 24 * 16, index / 24 * 16, 16, 16);
+            return new Rectangle(index % itemsPerRow * pixelsHorizontal, index / itemsPerRow * pixelsVertical, pixelsHorizontal, pixelsVertical);
         }
 
         private void log(string message)
