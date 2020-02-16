@@ -299,7 +299,7 @@ namespace SubterranianOverhaul
 
         private bool isModCrop(Crop crop)
         {
-            return (crop.netSeedIndex.Value == CaveCarrotSeed.getIndex());
+            return (crop.netSeedIndex.Value == CaveCarrotSeed.getIndex() || crop.netSeedIndex.Value == CaveCarrotFlower.getIndex());
         }
 
         private bool isModItem(Item currentItem)
