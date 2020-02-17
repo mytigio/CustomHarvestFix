@@ -196,9 +196,7 @@ namespace SubterranianOverhaul
                                         }
                                     }
                                 }
-                                
                             }
-                            
                         }
                     }
                 }
@@ -207,7 +205,7 @@ namespace SubterranianOverhaul
 
         private bool isGameReady()
         {
-            return !(!Context.IsWorldReady || Game1.currentLocation == null || Game1.player.CurrentItem == null);
+            return !(!Context.IsWorldReady || Game1.currentLocation == null);
         }
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -247,7 +245,7 @@ namespace SubterranianOverhaul
 
                     if (e.Button.IsActionButton())
                     {
-                        if (this.isModItem(currentItem) || PlantableCaveCarrot.IsValidLocation(location))
+                        if (currentItem != null && (this.isModItem(currentItem) || PlantableCaveCarrot.IsValidLocation(location)))
                         {
                             if (currentItem.ParentSheetIndex.Equals(CaveCarrot.HARVEST_INDEX))
                             {
@@ -267,12 +265,13 @@ namespace SubterranianOverhaul
                                 if (planted)
                                 {
                                     Game1.player.reduceActiveItemByOne();
+                                    return;
                                 }
                             }
                             else if (currentItem.ParentSheetIndex.Equals(CaveCarrotSeed.getIndex()))
                             {
                                 this.Monitor.Log("Attempt to plant a cave carrot at " + e.Cursor.GrabTile.ToString());
-                                bool planted = CaveCarrotSeed.AttemptPlanting(tile, Game1.currentLocation);
+                                bool planted = CaveCarrotSeed.AttemptPlanting(tile, Game1.currentLocation, Game1.player);
                                 if (planted)
                                 {
                                     Game1.player.reduceActiveItemByOne();
@@ -292,12 +291,12 @@ namespace SubterranianOverhaul
 
         private bool isModItem(Item currentItem)
         {
-            return (currentItem.ParentSheetIndex == VoidshroomSpore.getIndex() || currentItem.ParentSheetIndex == CaveCarrotSeed.getIndex());
+            return (currentItem != null && (currentItem.ParentSheetIndex == VoidshroomSpore.getIndex() || currentItem.ParentSheetIndex == CaveCarrotSeed.getIndex()));
         }
 
         private void OnRenderedHud(object sender, RenderedHudEventArgs e)
         {
-            if (isGameReady())
+            if (isGameReady() && !(Game1.player.CurrentItem == null))
             {
                 Item currentItem = Game1.player.CurrentItem;
 

@@ -62,7 +62,7 @@ namespace SubterranianOverhaul
 
         public static string getObjectData()
         {
-            return string.Format("{0}/{1}/{2}/Basic {3}/{4}/{5}", VoidshroomSpore.NAME, VoidshroomSpore.PRICE, VoidshroomSpore.EDIBILITY, VoidshroomSpore.CATEGORY, VoidshroomSpore.NAME, VoidshroomSpore.DESCRIPTION);
+            return string.Format("{0}/{1}/{2}/Basic -{3}/{4}/{5}", VoidshroomSpore.NAME, VoidshroomSpore.PRICE, VoidshroomSpore.EDIBILITY, VoidshroomSpore.CATEGORY, VoidshroomSpore.NAME, VoidshroomSpore.DESCRIPTION);
         }
 
         public override string getDescription()

@@ -60,13 +60,27 @@ namespace SubterranianOverhaul
                 IDictionary<int, string> data = editor.Data;
                 if (!data.ContainsKey(VoidshroomSpore.getIndex()))
                 {
-                    data.Add(VoidshroomSpore.getIndex(), VoidshroomSpore.getObjectData());
+                    int voidShroomSporeIndex = VoidshroomSpore.getIndex();
+                    String voidShroomSpore = VoidshroomSpore.getObjectData();
+                    this.log("Add voidshroom spore object data: "+ voidShroomSporeIndex + ": " + voidShroomSpore);
+                    data.Add(voidShroomSporeIndex, voidShroomSpore);
                     
                 }
 
                 if (!data.ContainsKey(CaveCarrotSeed.getIndex()))
                 {
-                    data.Add(CaveCarrotSeed.getIndex(), CaveCarrotSeed.getObjectData());
+                    int caveCarrotSeedIndex = CaveCarrotSeed.getIndex();
+                    String caveCarrotObject = CaveCarrotSeed.getObjectData();
+                    this.log("Add cave carrot seed object data: "+ caveCarrotSeedIndex + ": " + caveCarrotObject);
+                    data.Add(caveCarrotSeedIndex, caveCarrotObject);
+                }
+
+                if (!data.ContainsKey(CaveCarrotFlower.getIndex()))
+                {
+                    int caveCarrotFlowerIndex = CaveCarrotFlower.getIndex();
+                    String caveCarrotFlowerObject = CaveCarrotFlower.getObjectData();
+                    this.log("Add cave carrot flower 'seed' data: "+ caveCarrotFlowerIndex+": " + caveCarrotFlowerObject);
+                    data.Add(caveCarrotFlowerIndex, caveCarrotFlowerObject);
                 }
             } else if (asset.AssetNameEquals("Data\\Crops"))
             {

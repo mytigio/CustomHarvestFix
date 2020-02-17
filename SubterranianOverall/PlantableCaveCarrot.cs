@@ -45,11 +45,16 @@ namespace SubterranianOverhaul
                     int X = (int)grabTile.X;
                     int Y = (int)grabTile.Y;
                     int seedIndex = CaveCarrotFlower.getIndex();
-                    Crop caveCarrotFlower = new Crop(seedIndex, X,Y);
-                    location.terrainFeatures.Add(grabTile, (TerrainFeature)new HoeDirt(0, caveCarrotFlower));
+                    bool isReallyGreenhouse = location.isGreenhouse.Value;
+                    location.isGreenhouse.Value = true;
+                    HoeDirt dirtPatch = new HoeDirt(0, location);
+                    location.terrainFeatures.Add(grabTile, (TerrainFeature)dirtPatch);
+                    dirtPatch.plant(seedIndex, X, Y, Game1.player, false, location);
+                    location.isGreenhouse.Value = isReallyGreenhouse;
                     return true;
-                } catch
-                {   
+                } catch (Exception e)
+                {
+                    ModEntry.GetMonitor().Log(e.InnerException.Message);
                     return false;
                 }
                 

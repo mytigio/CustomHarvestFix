@@ -63,7 +63,7 @@ namespace SubterranianOverhaul
 
         public static string getObjectData()
         {
-            return string.Format("{0}/{1}/{2}/Basic {3}/{4}/{5}", CaveCarrotSeed.NAME, CaveCarrotSeed.PRICE, CaveCarrotSeed.EDIBILITY, CaveCarrotSeed.CATEGORY, CaveCarrotSeed.NAME, CaveCarrotSeed.DESCRIPTION);
+            return string.Format("{0}/{1}/{2}/Seeds -{3}/{4}/{5}", CaveCarrotSeed.NAME, CaveCarrotSeed.PRICE, CaveCarrotSeed.EDIBILITY, CaveCarrotSeed.CATEGORY, CaveCarrotSeed.NAME, CaveCarrotSeed.DESCRIPTION);
         }
 
         public override string getDescription()
@@ -86,8 +86,12 @@ namespace SubterranianOverhaul
                     int X = (int)grabTile.X;
                     int Y = (int)grabTile.Y;
                     int seedIndex = CaveCarrotSeed.getIndex();
-                    Crop caveCarrot = new Crop(seedIndex, X,Y);
-                    location.terrainFeatures.Add(grabTile, (TerrainFeature)new HoeDirt(0, caveCarrot));
+                    bool isReallyGreenhouse = location.isGreenhouse.Value;
+                    location.isGreenhouse.Value = true;
+                    HoeDirt dirtPatch = new HoeDirt(0, location);
+                    location.terrainFeatures.Add(grabTile, (TerrainFeature)dirtPatch);
+                    bool planted2 = dirtPatch.plant(seedIndex, X, Y, Game1.player, false, location);
+                    location.isGreenhouse.Value = isReallyGreenhouse;
                     return true;
                 } catch
                 {   
