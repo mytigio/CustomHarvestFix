@@ -13,40 +13,41 @@ using xTile.Dimensions;
 using System.IO;
 using StardewModdingAPI.Events;
 using Microsoft.Xna.Framework.Input;
+using SubterranianOverhaul.Crops;
 
 namespace SubterranianOverhaul
 {
-    class VoidshroomSpore : StardewValley.Object
+    class CaveCarrotSeed : StardewValley.Object
     {
-        public const String NAME = "Voidshroom Spore";
-        public const String DISPLAY_NAME = "Voidshroom Spore";
+        public const String NAME = "Ancient Carrot Seed";
+        public const String DISPLAY_NAME = "Ancient Carrot Seed";
         public const int QUALITY = 0;
         public const int PRICE = 10;
         public const int CATEGORY = 74;
         public const int EDIBILITY = -300;
-        public const string DESCRIPTION = "The spore of a giant Voidshroom Tree.  These giant fungi only thrive in darkness.";
+        public const string DESCRIPTION = "An ancient carrot seed that can only grow in the dark, moist soil of living caves.";
 
         private static int itemIndex = -1;
 
         public static void setIndex()
         {
-            if (VoidshroomSpore.itemIndex == -1)
+            if (CaveCarrotSeed.itemIndex == -1)
             {
-                VoidshroomSpore.itemIndex = IndexManager.getUnusedObjectIndex();
+                CaveCarrotSeed.itemIndex = IndexManager.getUnusedObjectIndex();
             }
         }
 
         public static int getIndex()
         {
-            if(VoidshroomSpore.itemIndex == -1)
+            if(CaveCarrotSeed.itemIndex == -1)
             {
-                VoidshroomSpore.setIndex();
+                CaveCarrotSeed.setIndex();
             }
 
-            return VoidshroomSpore.itemIndex;
+            return CaveCarrotSeed.itemIndex;
         }
 
-        public VoidshroomSpore(Vector2 tileLocation) : base(tileLocation, itemIndex, false)
+        public CaveCarrotSeed(Vector2 tileLocation) : base(tileLocation, itemIndex, false)
         {
             this.Name = VoidshroomSpore.NAME;
             this.DisplayName = VoidshroomSpore.DISPLAY_NAME;
@@ -55,19 +56,19 @@ namespace SubterranianOverhaul
             this.Category = VoidshroomSpore.CATEGORY;
         }
 
-        public VoidshroomSpore() : this(Vector2.Zero)
+        public CaveCarrotSeed() : this(Vector2.Zero)
         {
             
         }        
 
         public static string getObjectData()
         {
-            return string.Format("{0}/{1}/{2}/Basic -{3}/{4}/{5}", VoidshroomSpore.NAME, VoidshroomSpore.PRICE, VoidshroomSpore.EDIBILITY, VoidshroomSpore.CATEGORY, VoidshroomSpore.NAME, VoidshroomSpore.DESCRIPTION);
+            return string.Format("{0}/{1}/{2}/Seeds -{3}/{4}/{5}", CaveCarrotSeed.NAME, CaveCarrotSeed.PRICE, CaveCarrotSeed.EDIBILITY, CaveCarrotSeed.CATEGORY, CaveCarrotSeed.NAME, CaveCarrotSeed.DESCRIPTION);
         }
 
         public override string getDescription()
         {
-            return VoidshroomSpore.DESCRIPTION;
+            return CaveCarrotSeed.DESCRIPTION;
         }
 
         public static bool IsValidLocation(GameLocation location)
@@ -77,12 +78,27 @@ namespace SubterranianOverhaul
 
         internal static bool AttemptPlanting(Vector2 grabTile, GameLocation location, Farmer who = null)
         {
-            if (VoidshroomSpore.canPlaceHere(location, grabTile))
-            {
-                location.terrainFeatures.Remove(grabTile);
-                location.terrainFeatures.Add(grabTile, (TerrainFeature)new VoidshroomTree(0));
-                location.playSound("dirtyHit");
-                return true;
+            if (CaveCarrotSeed.canPlaceHere(location, grabTile))
+            {   
+                try
+                {
+                    location.terrainFeatures.Remove(grabTile);
+                    int X = (int)grabTile.X;
+                    int Y = (int)grabTile.Y;
+                    int seedIndex = CaveCarrotSeed.getIndex();
+                    bool isReallyGreenhouse = location.isGreenhouse.Value;
+                    location.isGreenhouse.Value = true;
+                    HoeDirt dirtPatch = new HoeDirt(0, location);
+                    location.terrainFeatures.Add(grabTile, (TerrainFeature)dirtPatch);
+                    bool planted2 = dirtPatch.plant(seedIndex, X, Y, Game1.player, false, location);
+                    location.isGreenhouse.Value = isReallyGreenhouse;
+                    return true;
+                } catch
+                {   
+                    return false;
+                }
+                
+                
             } else
             {
                 if(!IsValidLocation(location))
