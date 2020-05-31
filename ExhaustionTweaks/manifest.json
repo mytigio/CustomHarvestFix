@@ -1,0 +1,10 @@
+{
+  "Name": "Exhaustion Tweaks",
+  "Author": "mytigio",
+  "Version": "1.0.0",
+  "Description": "Tweaks Behavior for falling asleep on your farm.",
+  "UniqueID": "mytigio.customharvestfix",
+  "EntryDll": "ExhaustionTweaks.dll",
+  "MinimumApiVersion": "2.10.0",
+  "UpdateKeys": []
+}
