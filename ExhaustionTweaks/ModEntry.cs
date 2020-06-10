@@ -52,10 +52,12 @@ namespace ExhaustionTweaks
 
         private void EnergyReductionHandler(object sender, StardewModdingAPI.Events.TimeChangedEventArgs e)
         {
+            Farmer localFarmer = Game1.player;
             modEntry.Monitor.Log($"Time Update: {e.NewTime}.", LogLevel.Trace);
-            if (config.constantEnergyLossStartTime <= e.NewTime)
+            modEntry.Monitor.Log($"In Bed: {localFarmer.isInBed.Value}.", LogLevel.Trace);
+            if (config.constantEnergyLossStartTime <= e.NewTime && !localFarmer.isInBed.Value)
             {
-                Farmer localFarmer = Game1.player;
+                
                 modEntry.Monitor.Log($"Reduce energy for: {localFarmer.displayName}.", LogLevel.Trace);
                 bool reduceEnergy = true;
                 if (config.disableLossAtMinimumEnergy && config.minimumEnergyToDisableLoss > localFarmer.Stamina)
